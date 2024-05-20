@@ -1,0 +1,5 @@
+discord.py==2.3.2
+python-dotenv==1.0.1
+gamercon-async==1.0.6
+palworld-api==1.0.2
+aiohttp==3.9.5

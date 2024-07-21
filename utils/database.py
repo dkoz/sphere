@@ -66,14 +66,6 @@ async def server_autocomplete(guild_id, current):
         await conn.close()
         return [server[0] for server in servers]
 
-async def remove_guild_data(guild_id):
-    conn = await db_connection()
-    if conn is not None:
-        cursor = await conn.cursor()
-        await cursor.execute("DELETE FROM servers WHERE guild_id = ?", (guild_id,))
-        await conn.commit()
-        await conn.close()
-
 if __name__ == "__main__":
     import asyncio
     asyncio.run(initialize_db())

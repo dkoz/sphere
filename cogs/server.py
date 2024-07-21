@@ -22,19 +22,18 @@ class ServerManagementCog(commands.Cog):
             password = modal.children[3].value
             api_port = int(modal.children[4].value) if modal.children[4].value else None
 
-            success = await add_server(
-                interaction.guild_id,
-                server_name,
-                host,
-                rcon_port,
-                password,
-                api_port
-            )
-
-            if success:
+            try:
+                await add_server(
+                    interaction.guild_id,
+                    server_name,
+                    host,
+                    rcon_port,
+                    password,
+                    api_port
+                )
                 await modal_interaction.followup.send("Server added successfully.", ephemeral=True)
-            else:
-                await modal_interaction.followup.send("Failed to add server.", ephemeral=True)
+            except Exception as e:
+                await modal_interaction.followup.send(f"Failed to add server: {e}", ephemeral=True)
 
         modal.on_submit = on_submit_override
         await interaction.response.send_modal(modal)
@@ -46,13 +45,15 @@ class ServerManagementCog(commands.Cog):
 
     @app_commands.command(name="removeserver", description="Remove a server configuration")
     @app_commands.autocomplete(server=server_names)
+    @app_commands.describe(server="Server to remove")
     @app_commands.default_permissions(administrator=True)
     async def remove_server_command(self, interaction: discord.Interaction, server: str):
-        success = await remove_server(interaction.guild_id, server)
-        if success:
-            await interaction.response.send_message("Server removed successfully.")
-        else:
-            await interaction.response.send_message("Failed to remove server.")
+        await interaction.response.defer(ephemeral=True)
+        try:
+            await remove_server(interaction.guild_id, server)
+            await interaction.followup.send("Server removed successfully.")
+        except Exception as e:
+            await interaction.followup.send(f"Failed to remove server: {e}", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(ServerManagementCog(bot))

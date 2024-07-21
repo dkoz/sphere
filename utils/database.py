@@ -31,6 +31,10 @@ async def initialize_db():
             location_x REAL NOT NULL,
             location_y REAL NOT NULL,
             level INTEGER NOT NULL
+        )""",
+        """CREATE TABLE IF NOT EXISTS whitelist (
+            steamid TEXT PRIMARY KEY,
+            whitelisted BOOLEAN NOT NULL
         )"""
     ]
     conn = await db_connection()
@@ -105,6 +109,36 @@ async def server_autocomplete(guild_id, current):
         servers = await cursor.fetchall()
         await conn.close()
         return [server[0] for server in servers]
+    
+async def add_whitelist(steamid, whitelisted):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("""
+            INSERT OR REPLACE INTO whitelist (steamid, whitelisted)
+            VALUES (?, ?)
+        """, (steamid, whitelisted))
+        await conn.commit()
+        await conn.close()
+
+async def remove_whitelist(steamid):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("DELETE FROM whitelist WHERE steamid = ?", (steamid,))
+        await conn.commit()
+        await conn.close()
+
+async def is_whitelisted(steamid):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("SELECT whitelisted FROM whitelist WHERE steamid = ?", (steamid,))
+        result = await cursor.fetchone()
+        await conn.close()
+        if result:
+            return result[0]
+        return False
 
 if __name__ == "__main__":
     import asyncio

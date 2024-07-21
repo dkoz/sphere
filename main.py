@@ -3,6 +3,7 @@ from discord.ext import commands
 import settings
 import os
 import logging
+from utils.database import initialize_db
 
 logging.basicConfig(level=logging.INFO, filename='bot.log', format='%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
@@ -34,6 +35,7 @@ async def unload(ctx, extension):
         await ctx.send(f"Failed to unload {extension}: {e}")
 
 async def setup_hook():
+    await initialize_db()
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py") and not filename.startswith("__"):
             extension = filename[:-3]

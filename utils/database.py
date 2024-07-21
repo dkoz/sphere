@@ -20,6 +20,17 @@ async def initialize_db():
             password TEXT NOT NULL,
             api_port INTEGER,
             PRIMARY KEY (guild_id, server_name)
+        )""",
+        """CREATE TABLE IF NOT EXISTS players (
+            player_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            account_name TEXT NOT NULL,
+            user_id TEXT NOT NULL,
+            ip TEXT NOT NULL,
+            ping REAL NOT NULL,
+            location_x REAL NOT NULL,
+            location_y REAL NOT NULL,
+            level INTEGER NOT NULL
         )"""
     ]
     conn = await db_connection()
@@ -29,6 +40,36 @@ async def initialize_db():
             await cursor.execute(command)
         await conn.commit()
         await conn.close()
+
+async def add_player(player):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("""
+            INSERT OR REPLACE INTO players (player_id, name, account_name, user_id, ip, ping, location_x, location_y, level)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            player['playerId'],
+            player['name'],
+            player['accountName'],
+            player['userId'],
+            player['ip'],
+            player['ping'],
+            player['location_x'],
+            player['location_y'],
+            player['level']
+        ))
+        await conn.commit()
+        await conn.close()
+
+async def fetch_all_servers():
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("SELECT * FROM servers")
+        servers = await cursor.fetchall()
+        await conn.close()
+        return servers
 
 async def add_server(guild_id, server_name, host, password, api_port):
     conn = await db_connection()

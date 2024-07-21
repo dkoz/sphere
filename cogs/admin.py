@@ -1,0 +1,78 @@
+import discord
+from discord.ext import commands
+from discord import app_commands
+from utils.database import fetch_server_details, server_autocomplete
+from palworld_api import PalworldAPI
+
+class AdminCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    async def get_api_instance(self, guild_id, server_name):
+        server_config = await fetch_server_details(guild_id, server_name)
+        if not server_config:
+            return None, f"Server '{server_name}' configuration not found."
+        
+        host = server_config[2]
+        password = server_config[3]
+        api_port = server_config[4]
+        
+        api = PalworldAPI(f"http://{host}:{api_port}", "admin", password)
+        return api, None
+
+    async def server_autocomplete(self, interaction: discord.Interaction, current: str):
+        guild_id = interaction.guild.id
+        server_names = await server_autocomplete(guild_id, current)
+        choices = [app_commands.Choice(name=name, value=name) for name in server_names]
+        return choices
+
+    @app_commands.command(name="kick", description="Kick a player from the server.")
+    @app_commands.describe(server="The name of the server", player_id="The player SteamID to kick", reason="The reason for the kick")
+    @app_commands.autocomplete(server=server_autocomplete)
+    @app_commands.default_permissions(administrator=True)
+    async def kick_player(self, interaction: discord.Interaction, server: str, player_id: str, reason: str):
+        try:
+            api, error = await self.get_api_instance(interaction.guild.id, server)
+            if error:
+                await interaction.response.send_message(error, ephemeral=True)
+                return
+            
+            await api.kick_player(player_id, reason)
+            await interaction.response.send_message(f"Player {player_id} has been kicked for: {reason}", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+
+    @app_commands.command(name="ban", description="Ban a player from the server.")
+    @app_commands.describe(server="The name of the server", player_id="The player SteamID to ban", reason="The reason for the ban")
+    @app_commands.autocomplete(server=server_autocomplete)
+    @app_commands.default_permissions(administrator=True)
+    async def ban_player(self, interaction: discord.Interaction, server: str, player_id: str, reason: str):
+        try:
+            api, error = await self.get_api_instance(interaction.guild.id, server)
+            if error:
+                await interaction.response.send_message(error, ephemeral=True)
+                return
+            
+            await api.ban_player(player_id, reason)
+            await interaction.response.send_message(f"Player {player_id} has been banned for: {reason}", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+
+    @app_commands.command(name="unban", description="Unban a player from the server.")
+    @app_commands.describe(server="The name of the server", player_id="The player SteamID to unban")
+    @app_commands.autocomplete(server=server_autocomplete)
+    @app_commands.default_permissions(administrator=True)
+    async def unban_player(self, interaction: discord.Interaction, server: str, player_id: str):
+        try:
+            api, error = await self.get_api_instance(interaction.guild.id, server)
+            if error:
+                await interaction.response.send_message(error, ephemeral=True)
+                return
+            
+            await api.unban_player(player_id)
+            await interaction.response.send_message(f"Player {player_id} has been unbanned.", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+
+async def setup(bot):
+    await bot.add_cog(AdminCog(bot))

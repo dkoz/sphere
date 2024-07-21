@@ -29,14 +29,14 @@ class RestAPICog(commands.Cog):
             await interaction.response.defer()
             
             host = server_config[2]
-            api_port = server_config[5]
-            password = server_config[4]
+            password = server_config[3]
+            api_port = server_config[4]
             
             api = PalworldAPI(f"http://{host}:{api_port}", "admin", password)
             server_info = await api.get_server_info()
             server_metrics = await api.get_server_metrics()
             
-            embed = discord.Embed(title=f"{server_info.get('servername', {server})}", description=f"{server_info.get('description', 'N/A')}", color=discord.Color.blurple())
+            embed = discord.Embed(title=f"{server_info.get('servername', server)}", description=f"{server_info.get('description', 'N/A')}", color=discord.Color.blurple())
             embed.add_field(name="Players", value=f"{server_metrics.get('currentplayernum', 'N/A')}/{server_metrics.get('maxplayernum', 'N/A')}", inline=False)
             embed.add_field(name="Version", value=server_info.get('version', 'N/A'), inline=False)
             

@@ -18,16 +18,14 @@ class ServerManagementCog(commands.Cog):
 
             server_name = modal.children[0].value
             host = modal.children[1].value
-            rcon_port = int(modal.children[2].value)
-            password = modal.children[3].value
-            api_port = int(modal.children[4].value) if modal.children[4].value else None
+            password = modal.children[2].value
+            api_port = int(modal.children[3].value) if modal.children[3].value else None
 
             try:
                 await add_server(
                     interaction.guild_id,
                     server_name,
                     host,
-                    rcon_port,
                     password,
                     api_port
                 )

@@ -1,7 +1,7 @@
 import aiosqlite
 import os
 
-DATABASE_PATH = "data.db"
+DATABASE_PATH = os.path.join('data', 'palworld.db')
 
 async def db_connection():
     conn = None

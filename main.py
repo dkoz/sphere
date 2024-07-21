@@ -5,7 +5,9 @@ import os
 import logging
 from utils.database import initialize_db
 
-logging.basicConfig(level=logging.INFO, filename='bot.log', format='%(asctime)s:%(levelname)s:%(name)s: %(message)s')
+log_path = os.path.join('logs', 'bot.log')
+
+logging.basicConfig(level=logging.INFO, filename=log_path, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
 intents = discord.Intents.all()
 intents.message_content = True
@@ -15,24 +17,6 @@ bot = commands.Bot(command_prefix=settings.bot_prefix, intents=intents)
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'Pong! {round(bot.latency * 1000)}ms')
-    
-@bot.command()
-@commands.is_owner()
-async def load(ctx, extension):
-    try:
-        bot.load_extension(f"cogs.{extension}")
-        await ctx.send(f"Loaded {extension}")
-    except Exception as e:
-        await ctx.send(f"Failed to load {extension}: {e}")
-
-@bot.command()
-@commands.is_owner()
-async def unload(ctx, extension):
-    try:
-        bot.unload_extension(f"cogs.{extension}")
-        await ctx.send(f"Unloaded {extension}")
-    except Exception as e:
-        await ctx.send(f"Failed to unload {extension}: {e}")
 
 async def setup_hook():
     await initialize_db()

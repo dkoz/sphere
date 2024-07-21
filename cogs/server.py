@@ -3,6 +3,7 @@ from discord import app_commands
 import discord
 from utils.database import add_server, remove_server, server_autocomplete
 from utils.servermodal import AddServerModal
+import logging
 
 class ServerManagementCog(commands.Cog):
     def __init__(self, bot):
@@ -32,6 +33,7 @@ class ServerManagementCog(commands.Cog):
                 await modal_interaction.followup.send("Server added successfully.", ephemeral=True)
             except Exception as e:
                 await modal_interaction.followup.send(f"Failed to add server: {e}", ephemeral=True)
+                logging.error(f"Failed to add server: {e}")
 
         modal.on_submit = on_submit_override
         await interaction.response.send_modal(modal)
@@ -52,6 +54,7 @@ class ServerManagementCog(commands.Cog):
             await interaction.followup.send("Server removed successfully.")
         except Exception as e:
             await interaction.followup.send(f"Failed to remove server: {e}", ephemeral=True)
+            logging.error(f"Failed to remove server: {e}")
 
 async def setup(bot):
     await bot.add_cog(ServerManagementCog(bot))

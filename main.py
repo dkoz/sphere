@@ -25,9 +25,9 @@ async def setup_hook():
             extension = filename[:-3]
             try:
                 await bot.load_extension(f"cogs.{extension}")
-                print(f"Loaded {extension}")
+                logging.info(f"Loaded {extension}.")
             except Exception as e:
-                print(f"Failed to load {extension}: {e}")
+                logging.error(f"Failed to load {extension}: {e}")
     await bot.tree.sync()
 
 bot.setup_hook = setup_hook

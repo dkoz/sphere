@@ -25,8 +25,8 @@ class WhitelistCog(commands.Cog):
                     steamid = player['userId']
                     if not await is_whitelisted(steamid):
                         await api.kick_player(steamid, "You are not whitelisted.")
-                        logging.error(f"Player {steamid} kicked from server '{server_name}' for not being whitelisted.")
-                logging.error(f"Whitelist checked for server '{server_name}'.")
+                        logging.info(f"Player {steamid} kicked from server '{server_name}' for not being whitelisted.")
+                logging.info(f"Whitelist checked for server '{server_name}'.")
             except Exception as e:
                 logging.error(f"An unexpected error occurred while checking whitelist for server '{server_name}': {str(e)}")
 
@@ -35,7 +35,7 @@ class WhitelistCog(commands.Cog):
         await self.bot.wait_until_ready()
 
     @app_commands.command(name="add", description="Add a player to the whitelist.")
-    @app_commands.describe(steamid="The Steam ID of the player to whitelist.")
+    @app_commands.describe(steamid="The SteamID of the player to whitelist.")
     @app_commands.default_permissions(administrator=True)
     async def whitelist_add(self, interaction: discord.Interaction, steamid: str):
         try:
@@ -46,7 +46,7 @@ class WhitelistCog(commands.Cog):
             logging.error(f"An unexpected error occurred: {str(e)}")
 
     @app_commands.command(name="remove", description="Remove a player from the whitelist.")
-    @app_commands.describe(steamid="The Steam ID of the player to remove from the whitelist.")
+    @app_commands.describe(steamid="The SteamID of the player to remove from the whitelist.")
     @app_commands.default_permissions(administrator=True)
     async def whitelist_remove(self, interaction: discord.Interaction, steamid: str):
         try:

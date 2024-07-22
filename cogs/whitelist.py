@@ -1,7 +1,15 @@
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
-from utils.database import add_whitelist, remove_whitelist, is_whitelisted, fetch_all_servers
+from utils.database import (
+    add_whitelist,
+    remove_whitelist,
+    is_whitelisted,
+    fetch_all_servers,
+    whitelist_set,
+    whitelist_get,
+    server_autocomplete,
+)
 from palworld_api import PalworldAPI
 import logging
 
@@ -18,6 +26,8 @@ class WhitelistCog(commands.Cog):
         servers = await fetch_all_servers()
         for server in servers:
             guild_id, server_name, host, password, api_port = server
+            if not await whitelist_get(guild_id, server_name):
+                continue
             try:
                 api = PalworldAPI(f"http://{host}:{api_port}", "admin", password)
                 player_list = await api.get_player_list()
@@ -52,6 +62,35 @@ class WhitelistCog(commands.Cog):
         try:
             await remove_whitelist(steamid)
             await interaction.response.send_message(f"Player {steamid} has been removed from the whitelist.", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
+
+    async def server_names(self, interaction: discord.Interaction, current: str):
+        guild_id = interaction.guild.id
+        server_names = await server_autocomplete(guild_id, current)
+        return [app_commands.Choice(name=name, value=name) for name in server_names]
+
+    @app_commands.command(name="enable", description="Enable whitelist for a server.")
+    @app_commands.describe(server_name="The name of the server to enable the whitelist for.")
+    @app_commands.autocomplete(server_name=server_names)
+    @app_commands.default_permissions(administrator=True)
+    async def enable_whitelist(self, interaction: discord.Interaction, server_name: str):
+        try:
+            await whitelist_set(interaction.guild_id, server_name, True)
+            await interaction.response.send_message(f"Whitelist has been enabled for server {server_name}.", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
+
+    @app_commands.command(name="disable", description="Disable whitelist for a server.")
+    @app_commands.describe(server_name="The name of the server to disable the whitelist for.")
+    @app_commands.autocomplete(server_name=server_names)
+    @app_commands.default_permissions(administrator=True)
+    async def disable_whitelist(self, interaction: discord.Interaction, server_name: str):
+        try:
+            await whitelist_set(interaction.guild_id, server_name, False)
+            await interaction.response.send_message(f"Whitelist has been disabled for server {server_name}.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
             logging.error(f"An unexpected error occurred: {str(e)}")

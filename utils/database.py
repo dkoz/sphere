@@ -35,6 +35,12 @@ async def initialize_db():
         """CREATE TABLE IF NOT EXISTS whitelist (
             steamid TEXT PRIMARY KEY,
             whitelisted BOOLEAN NOT NULL
+        )""",
+        """CREATE TABLE IF NOT EXISTS whitelist_status (
+            guild_id INTEGER NOT NULL,
+            server_name TEXT NOT NULL,
+            enabled BOOLEAN NOT NULL,
+            PRIMARY KEY (guild_id, server_name)
         )"""
     ]
     conn = await db_connection()
@@ -134,6 +140,28 @@ async def is_whitelisted(steamid):
     if conn is not None:
         cursor = await conn.cursor()
         await cursor.execute("SELECT whitelisted FROM whitelist WHERE steamid = ?", (steamid,))
+        result = await cursor.fetchone()
+        await conn.close()
+        if result:
+            return result[0]
+        return False
+    
+async def whitelist_set(guild_id, server_name, enabled):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("""
+            INSERT OR REPLACE INTO whitelist_status (guild_id, server_name, enabled)
+            VALUES (?, ?, ?)
+        """, (guild_id, server_name, enabled))
+        await conn.commit()
+        await conn.close()
+
+async def whitelist_get(guild_id, server_name):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("SELECT enabled FROM whitelist_status WHERE guild_id = ? AND server_name = ?", (guild_id, server_name))
         result = await cursor.fetchone()
         await conn.close()
         if result:

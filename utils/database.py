@@ -22,10 +22,10 @@ async def initialize_db():
             PRIMARY KEY (guild_id, server_name)
         )""",
         """CREATE TABLE IF NOT EXISTS players (
-            player_id TEXT PRIMARY KEY,
+            user_id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             account_name TEXT NOT NULL,
-            user_id TEXT NOT NULL,
+            player_id TEXT NOT NULL,
             ip TEXT NOT NULL,
             ping REAL NOT NULL,
             location_x REAL NOT NULL,
@@ -56,13 +56,13 @@ async def add_player(player):
     if conn is not None:
         cursor = await conn.cursor()
         await cursor.execute("""
-            INSERT OR REPLACE INTO players (player_id, name, account_name, user_id, ip, ping, location_x, location_y, level)
+            INSERT OR REPLACE INTO players (user_id, name, account_name, player_id, ip, ping, location_x, location_y, level)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            player['playerId'],
+            player['userId'],
             player['name'],
             player['accountName'],
-            player['userId'],
+            player['playerId'],
             player['ip'],
             player['ping'],
             player['location_x'],

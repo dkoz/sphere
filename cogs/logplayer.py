@@ -22,7 +22,7 @@ class PlayerLoggingCog(commands.Cog):
                 player_list = await api.get_player_list()
                 for player in player_list['players']:
                     await add_player(player)
-                logging.error(f"Players from server '{server_name}' logged successfully.")
+                logging.info(f"Players from server '{server_name}' logged successfully.")
             except Exception as e:
                 logging.error(f"An unexpected error occurred while logging players from server '{server_name}': {str(e)}")
 

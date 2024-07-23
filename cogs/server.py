@@ -1,7 +1,12 @@
 from discord.ext import commands
 from discord import app_commands
 import discord
-from utils.database import add_server, remove_server, server_autocomplete
+from utils.database import (
+    add_server,
+    remove_server,
+    server_autocomplete,
+    remove_whitelist_status
+)
 from utils.servermodal import AddServerModal
 import logging
 
@@ -51,6 +56,7 @@ class ServerManagementCog(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         try:
             await remove_server(interaction.guild_id, server)
+            await remove_whitelist_status(interaction.guild_id, server)
             await interaction.followup.send("Server removed successfully.")
         except Exception as e:
             await interaction.followup.send(f"Failed to remove server: {e}", ephemeral=True)

@@ -125,6 +125,14 @@ async def remove_server(guild_id, server_name):
         await conn.commit()
         await conn.close()
 
+async def remove_whitelist_status(guild_id, server_name):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("DELETE FROM whitelist_status WHERE guild_id = ? AND server_name = ?", (guild_id, server_name))
+        await conn.commit()
+        await conn.close()
+
 async def server_autocomplete(guild_id, current):
     conn = await db_connection()
     if conn is not None:

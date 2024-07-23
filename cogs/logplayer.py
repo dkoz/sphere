@@ -1,6 +1,12 @@
 import discord
 from discord.ext import commands, tasks
-from utils.database import add_player, fetch_all_servers
+from discord import app_commands
+from utils.database import (
+    add_player,
+    fetch_all_servers,
+    fetch_player,
+    player_autocomplete
+)
 from palworld_api import PalworldAPI
 import logging
 
@@ -25,6 +31,31 @@ class PlayerLoggingCog(commands.Cog):
                 logging.info(f"Players from server '{server_name}' logged successfully.")
             except Exception as e:
                 logging.error(f"An unexpected error occurred while logging players from server '{server_name}': {str(e)}")
+
+    async def player_autocomplete(self, interaction: discord.Interaction, current: str):
+        players = await player_autocomplete(current)
+        choices = [app_commands.Choice(name=player[1], value=player[0]) for player in players]
+        return choices
+
+    @app_commands.command(name="lookup", description="Fetch and display player information")
+    @app_commands.autocomplete(user=player_autocomplete)
+    @app_commands.default_permissions(administrator=True)
+    async def player_lookup(self, interaction: discord.Interaction, user: str):
+        player = await fetch_player(user)
+        if player:
+            embed = self.player_embed(player)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            await interaction.response.send_message("Player not found.", ephemeral=True)
+
+    def player_embed(self, player):
+        embed = discord.Embed(title=f"Player: {player[1]} ({player[2]})", color=discord.Color.blurple())
+        embed.add_field(name="Level", value=player[8])
+        embed.add_field(name="Ping", value=player[5])
+        embed.add_field(name="Location", value=f"({player[6]}, {player[7]})")
+        embed.add_field(name="SteamID", value=f"```{player[0]}```", inline=False)
+        embed.add_field(name="PlayerUID", value=f"```{player[3]}```", inline=False)
+        return embed
 
     @log_players.before_loop
     async def before_log_players(self):

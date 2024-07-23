@@ -72,6 +72,24 @@ async def add_player(player):
         await conn.commit()
         await conn.close()
 
+async def fetch_player(user_id):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("SELECT * FROM players WHERE user_id = ?", (user_id,))
+        player = await cursor.fetchone()
+        await conn.close()
+        return player
+
+async def player_autocomplete(current):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("SELECT user_id, name FROM players WHERE name LIKE ?", (f'%{current}%',))
+        players = await cursor.fetchall()
+        await conn.close()
+        return [(player[0], player[1]) for player in players]
+
 async def fetch_all_servers():
     conn = await db_connection()
     if conn is not None:

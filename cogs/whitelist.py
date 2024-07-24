@@ -1,14 +1,16 @@
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
-from utils.database import (
+from utils.whitelist import (
     add_whitelist,
     remove_whitelist,
     is_whitelisted,
-    fetch_all_servers,
     whitelist_set,
-    whitelist_get,
-    server_autocomplete,
+    whitelist_get
+)
+from utils.database import (
+    fetch_all_servers,
+    server_autocomplete
 )
 from palworld_api import PalworldAPI
 import logging

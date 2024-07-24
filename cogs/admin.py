@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from utils.database import fetch_server_details, server_autocomplete
+from utils.bans import log_ban
 from palworld_api import PalworldAPI
 
 class AdminCog(commands.Cog):
@@ -54,6 +55,7 @@ class AdminCog(commands.Cog):
                 return
             
             await api.ban_player(player_id, reason)
+            await log_ban(player_id, reason)
             await interaction.response.send_message(f"Player {player_id} has been banned for: {reason}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)

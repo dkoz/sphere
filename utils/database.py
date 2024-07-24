@@ -43,7 +43,7 @@ async def initialize_db():
             PRIMARY KEY (guild_id, server_name)
         )""",
         """CREATE TABLE IF NOT EXISTS bans (
-            steam_id TEXT PRIMARY KEY,
+            steam_id TEXT NOT NULL,
             reason TEXT NOT NULL,
             timestamp DEFAULT CURRENT_TIMESTAMP
         )"""

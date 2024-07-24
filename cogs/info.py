@@ -3,8 +3,9 @@ from discord.ext import commands
 from discord import app_commands
 from utils.database import server_autocomplete, fetch_server_details
 from palworld_api import PalworldAPI
+import logging
 
-class RestAPICog(commands.Cog):
+class ServerInfoCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -39,10 +40,14 @@ class RestAPICog(commands.Cog):
             embed = discord.Embed(title=f"{server_info.get('servername', server)}", description=f"{server_info.get('description', 'N/A')}", color=discord.Color.blurple())
             embed.add_field(name="Players", value=f"{server_metrics.get('currentplayernum', 'N/A')}/{server_metrics.get('maxplayernum', 'N/A')}", inline=False)
             embed.add_field(name="Version", value=server_info.get('version', 'N/A'), inline=False)
+            embed.add_field(name="Uptime", value=f"{int(server_metrics.get('uptime', 'N/A') / 60)} minutes", inline=False)
+            embed.add_field(name="FPS", value=server_metrics.get('serverfps', 'N/A'), inline=False)
+            embed.add_field(name="Latency", value=f"{server_metrics.get('serverframetime', 'N/A'):.2f} ms", inline=False)
             
             await interaction.followup.send(embed=embed)
         except Exception as e:
             await interaction.followup.send(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
 
 async def setup(bot):
-    await bot.add_cog(RestAPICog(bot))
+    await bot.add_cog(ServerInfoCog(bot))

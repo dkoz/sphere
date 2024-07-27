@@ -58,6 +58,22 @@ class ControlCog(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
 
+    @app_commands.command(name="stop", description="Stop the server.")
+    @app_commands.describe(server="The name of the server")
+    @app_commands.autocomplete(server=server_autocomplete)
+    @app_commands.default_permissions(administrator=True)
+    async def stop(self, interaction: discord.Interaction, server: str):
+        try:
+            api, error = await self.get_api_instance(interaction.guild.id, server)
+            if error:
+                await interaction.response.send_message(error, ephemeral=True)
+                return
+            
+            response = await api.stop_server()
+            await interaction.response.send_message(f"Server stopped: {response}", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+
     @app_commands.command(name="save", description="Save the server state.")
     @app_commands.describe(server="The name of the server")
     @app_commands.autocomplete(server=server_autocomplete)
@@ -70,7 +86,6 @@ class ControlCog(commands.Cog):
                 return
             
             response = await api.save_server_state()
-            # api response
             await interaction.response.send_message(f"Server state saved: {response}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)

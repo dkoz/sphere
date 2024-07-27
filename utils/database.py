@@ -33,7 +33,7 @@ async def initialize_db():
             level INTEGER NOT NULL
         )""",
         """CREATE TABLE IF NOT EXISTS whitelist (
-            steamid TEXT PRIMARY KEY,
+            player_id TEXT PRIMARY KEY,
             whitelisted BOOLEAN NOT NULL
         )""",
         """CREATE TABLE IF NOT EXISTS whitelist_status (
@@ -43,7 +43,7 @@ async def initialize_db():
             PRIMARY KEY (guild_id, server_name)
         )""",
         """CREATE TABLE IF NOT EXISTS bans (
-            steam_id TEXT NOT NULL,
+            player_id TEXT NOT NULL,
             reason TEXT NOT NULL,
             timestamp DEFAULT CURRENT_TIMESTAMP
         )"""

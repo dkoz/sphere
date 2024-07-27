@@ -3,22 +3,22 @@ import os
 
 DATABASE_PATH = os.path.join('data', 'palworld.db')
 
-async def add_whitelist(steamid: str, whitelisted: bool):
+async def add_whitelist(player_id: str, whitelisted: bool):
     async with aiosqlite.connect(DATABASE_PATH) as db:
         await db.execute("""
-            INSERT OR REPLACE INTO whitelist (steamid, whitelisted)
+            INSERT OR REPLACE INTO whitelist (player_id, whitelisted)
             VALUES (?, ?)
-        """, (steamid, whitelisted))
+        """, (player_id, whitelisted))
         await db.commit()
 
-async def remove_whitelist(steamid: str):
+async def remove_whitelist(player_id: str):
     async with aiosqlite.connect(DATABASE_PATH) as db:
-        await db.execute("DELETE FROM whitelist WHERE steamid = ?", (steamid,))
+        await db.execute("DELETE FROM whitelist WHERE player_id = ?", (player_id,))
         await db.commit()
 
-async def is_whitelisted(steamid: str):
+async def is_whitelisted(player_id: str):
     async with aiosqlite.connect(DATABASE_PATH) as db:
-        cursor = await db.execute("SELECT whitelisted FROM whitelist WHERE steamid = ?", (steamid,))
+        cursor = await db.execute("SELECT whitelisted FROM whitelist WHERE player_id = ?", (player_id,))
         result = await cursor.fetchone()
         if result:
             return result[0]

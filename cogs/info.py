@@ -43,6 +43,7 @@ class ServerInfoCog(commands.Cog):
             embed.add_field(name="Uptime", value=f"{int(server_metrics.get('uptime', 'N/A') / 60)} minutes", inline=False)
             embed.add_field(name="FPS", value=server_metrics.get('serverfps', 'N/A'), inline=False)
             embed.add_field(name="Latency", value=f"{server_metrics.get('serverframetime', 'N/A'):.2f} ms", inline=False)
+            embed.set_thumbnail(url="https://www.palbot.gg/images/rexavatar.png")
             
             await interaction.followup.send(embed=embed)
         except Exception as e:

@@ -28,7 +28,7 @@ class AdminCog(commands.Cog):
         return choices
 
     @app_commands.command(name="kick", description="Kick a player from the server.")
-    @app_commands.describe(server="The name of the server", player_id="The player SteamID to kick", reason="The reason for the kick")
+    @app_commands.describe(server="The name of the server", player_id="The player ID to kick", reason="The reason for the kick")
     @app_commands.autocomplete(server=server_autocomplete)
     @app_commands.default_permissions(administrator=True)
     async def kick_player(self, interaction: discord.Interaction, server: str, player_id: str, reason: str):
@@ -44,7 +44,7 @@ class AdminCog(commands.Cog):
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
 
     @app_commands.command(name="ban", description="Ban a player from the server.")
-    @app_commands.describe(server="The name of the server", player_id="The player SteamID to ban", reason="The reason for the ban")
+    @app_commands.describe(server="The name of the server", player_id="The player ID to ban", reason="The reason for the ban")
     @app_commands.autocomplete(server=server_autocomplete)
     @app_commands.default_permissions(administrator=True)
     async def ban_player(self, interaction: discord.Interaction, server: str, player_id: str, reason: str):
@@ -61,7 +61,7 @@ class AdminCog(commands.Cog):
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
 
     @app_commands.command(name="unban", description="Unban a player from the server.")
-    @app_commands.describe(server="The name of the server", player_id="The player SteamID to unban")
+    @app_commands.describe(server="The name of the server", player_id="The player ID to unban")
     @app_commands.autocomplete(server=server_autocomplete)
     @app_commands.default_permissions(administrator=True)
     async def unban_player(self, interaction: discord.Interaction, server: str, player_id: str):

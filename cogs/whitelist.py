@@ -34,10 +34,10 @@ class WhitelistCog(commands.Cog):
                 api = PalworldAPI(f"http://{host}:{api_port}", "admin", password)
                 player_list = await api.get_player_list()
                 for player in player_list['players']:
-                    steamid = player['userId']
-                    if not await is_whitelisted(steamid):
-                        await api.kick_player(steamid, "You are not whitelisted.")
-                        logging.info(f"Player {steamid} kicked from server '{server_name}' for not being whitelisted.")
+                    playerid = player['userId']
+                    if not await is_whitelisted(playerid):
+                        await api.kick_player(playerid, "You are not whitelisted.")
+                        logging.info(f"Player {playerid} kicked from server '{server_name}' for not being whitelisted.")
                 logging.info(f"Whitelist checked for server '{server_name}'.")
             except Exception as e:
                 logging.error(f"An unexpected error occurred while checking whitelist for server '{server_name}': {str(e)}")
@@ -47,23 +47,23 @@ class WhitelistCog(commands.Cog):
         await self.bot.wait_until_ready()
 
     @app_commands.command(name="add", description="Add a player to the whitelist.")
-    @app_commands.describe(steamid="The SteamID of the player to whitelist.")
+    @app_commands.describe(playerid="The playerid of the player to whitelist.")
     @app_commands.default_permissions(administrator=True)
-    async def whitelist_add(self, interaction: discord.Interaction, steamid: str):
+    async def whitelist_add(self, interaction: discord.Interaction, playerid: str):
         try:
-            await add_whitelist(steamid, True)
-            await interaction.response.send_message(f"Player {steamid} has been added to the whitelist.", ephemeral=True)
+            await add_whitelist(playerid, True)
+            await interaction.response.send_message(f"Player {playerid} has been added to the whitelist.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
             logging.error(f"An unexpected error occurred: {str(e)}")
 
     @app_commands.command(name="remove", description="Remove a player from the whitelist.")
-    @app_commands.describe(steamid="The SteamID of the player to remove from the whitelist.")
+    @app_commands.describe(playerid="The playerid of the player to remove from the whitelist.")
     @app_commands.default_permissions(administrator=True)
-    async def whitelist_remove(self, interaction: discord.Interaction, steamid: str):
+    async def whitelist_remove(self, interaction: discord.Interaction, playerid: str):
         try:
-            await remove_whitelist(steamid)
-            await interaction.response.send_message(f"Player {steamid} has been removed from the whitelist.", ephemeral=True)
+            await remove_whitelist(playerid)
+            await interaction.response.send_message(f"Player {playerid} has been removed from the whitelist.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
             logging.error(f"An unexpected error occurred: {str(e)}")

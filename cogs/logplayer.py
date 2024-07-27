@@ -53,7 +53,7 @@ class PlayerLoggingCog(commands.Cog):
         embed.add_field(name="Level", value=player[8])
         embed.add_field(name="Ping", value=player[5])
         embed.add_field(name="Location", value=f"({player[6]}, {player[7]})")
-        embed.add_field(name="SteamID", value=f"```{player[0]}```", inline=False)
+        embed.add_field(name="PlayerID", value=f"```{player[0]}```", inline=False)
         embed.add_field(name="PlayerUID", value=f"```{player[3]}```", inline=False)
         return embed
 

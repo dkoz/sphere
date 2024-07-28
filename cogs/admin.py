@@ -4,6 +4,7 @@ from discord import app_commands
 from utils.database import fetch_server_details, server_autocomplete
 from utils.bans import log_ban, fetch_bans
 from palworld_api import PalworldAPI
+import logging
 
 class AdminCog(commands.Cog):
     def __init__(self, bot):
@@ -42,6 +43,7 @@ class AdminCog(commands.Cog):
             await interaction.response.send_message(f"Player {player_id} has been kicked for: {reason}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
 
     @app_commands.command(name="ban", description="Ban a player from the server.")
     @app_commands.describe(server="The name of the server", player_id="The player ID to ban", reason="The reason for the ban")
@@ -59,6 +61,7 @@ class AdminCog(commands.Cog):
             await interaction.response.send_message(f"Player {player_id} has been banned for: {reason}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
 
     @app_commands.command(name="unban", description="Unban a player from the server.")
     @app_commands.describe(server="The name of the server", player_id="The player ID to unban")
@@ -75,6 +78,7 @@ class AdminCog(commands.Cog):
             await interaction.response.send_message(f"Player {player_id} has been unbanned.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
 
     # This will definitely cause issues for big ban lists.
     @app_commands.command(name="bans", description="List all banned players.")
@@ -86,6 +90,7 @@ class AdminCog(commands.Cog):
             await interaction.response.send_message(f"Banned players:\n{ban_list}", ephemeral=True)
         else:
             await interaction.response.send_message("No players are banned.", ephemeral=True)
+            logging.info("No players are banned.")
 
 async def setup(bot):
     await bot.add_cog(AdminCog(bot))

@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 from utils.database import fetch_server_details, server_autocomplete
 from palworld_api import PalworldAPI
+import logging
 
 class ControlCog(commands.Cog):
     def __init__(self, bot):
@@ -41,6 +42,7 @@ class ControlCog(commands.Cog):
             await interaction.response.send_message(f"Announcement sent: {message}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
 
     @app_commands.command(name="shutdown", description="Shutdown the server.")
     @app_commands.describe(server="The name of the server", message="The message to display before shutdown", seconds="The number of seconds before shutdown")
@@ -57,6 +59,7 @@ class ControlCog(commands.Cog):
             await interaction.response.send_message(f"Server will shutdown in {seconds} seconds: {message}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
 
     @app_commands.command(name="stop", description="Stop the server.")
     @app_commands.describe(server="The name of the server")
@@ -73,6 +76,7 @@ class ControlCog(commands.Cog):
             await interaction.response.send_message(f"Server stopped: {response}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
 
     @app_commands.command(name="save", description="Save the server state.")
     @app_commands.describe(server="The name of the server")
@@ -89,6 +93,7 @@ class ControlCog(commands.Cog):
             await interaction.response.send_message(f"Server state saved: {response}", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+            logging.error(f"An unexpected error occurred: {str(e)}")
     
 async def setup(bot):
     await bot.add_cog(ControlCog(bot))

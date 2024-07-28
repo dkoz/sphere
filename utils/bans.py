@@ -10,3 +10,9 @@ async def log_ban(player_id: str, reason: str):
             VALUES (?, ?)
         """, (player_id, reason))
         await db.commit()
+        
+async def fetch_bans():
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        cursor = await db.execute("SELECT player_id, reason, timestamp FROM bans")
+        results = await cursor.fetchall()
+        return results

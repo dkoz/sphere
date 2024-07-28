@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from utils.database import fetch_server_details, server_autocomplete
-from utils.bans import log_ban
+from utils.bans import log_ban, fetch_bans
 from palworld_api import PalworldAPI
 
 class AdminCog(commands.Cog):
@@ -75,6 +75,17 @@ class AdminCog(commands.Cog):
             await interaction.response.send_message(f"Player {player_id} has been unbanned.", ephemeral=True)
         except Exception as e:
             await interaction.response.send_message(f"An unexpected error occurred: {str(e)}", ephemeral=True)
+
+    # This will definitely cause issues for big ban lists.
+    @app_commands.command(name="bans", description="List all banned players.")
+    @app_commands.default_permissions(administrator=True)
+    async def list_bans(self, interaction: discord.Interaction):
+        bans = await fetch_bans()
+        if bans:
+            ban_list = "\n".join([f"{ban[0]}: {ban[1]}" for ban in bans])
+            await interaction.response.send_message(f"Banned players:\n{ban_list}", ephemeral=True)
+        else:
+            await interaction.response.send_message("No players are banned.", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(AdminCog(bot))

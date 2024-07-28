@@ -12,5 +12,10 @@
  - **Administration Control**: Allows you to kick, ban, and manage players on your server directly from the bot.
  - **Server Query**: Allows you query servers added to the bot.
 
+## Installation
+ 1. Create a `.env` file and fill out your `BOT_TOKEN` and `BOT_PREFIX`
+ 2. Run the bot with `python main.py`
+ 3. Use `/help` to see all available commands on the bot.
+
 ## This project runs my libaries.
  - **Palworld API Wrapper** - A python library that acts as a wrapper for the Palworld server REST API.

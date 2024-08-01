@@ -16,3 +16,8 @@ async def fetch_bans():
         cursor = await db.execute("SELECT player_id, reason, timestamp FROM bans")
         results = await cursor.fetchall()
         return results
+
+async def clear_bans():
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        await db.execute("DELETE FROM bans")
+        await db.commit()

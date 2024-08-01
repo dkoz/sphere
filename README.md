@@ -1,4 +1,4 @@
-# Project Zero Palworld
+# Project Sphere Palworld
  > [!WARNING]  
  > Still in development, use at your own risk!
 

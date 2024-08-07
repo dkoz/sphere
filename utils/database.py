@@ -46,6 +46,12 @@ async def initialize_db():
             player_id TEXT NOT NULL,
             reason TEXT NOT NULL,
             timestamp DEFAULT CURRENT_TIMESTAMP
+        )""",
+        """CREATE TABLE IF NOT EXISTS server_logs (
+            guild_id INTEGER NOT NULL,
+            channel_id INTEGER NOT NULL,
+            server_name TEXT NOT NULL,
+            PRIMARY KEY (guild_id, server_name)
         )"""
     ]
     conn = await db_connection()
@@ -146,6 +152,35 @@ async def server_autocomplete(guild_id, current):
         servers = await cursor.fetchall()
         await conn.close()
         return [server[0] for server in servers]
+    
+# Server Logs
+async def add_logchannel(guild_id, channel_id, server_name):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("""
+            INSERT OR REPLACE INTO server_logs (guild_id, channel_id, server_name)
+            VALUES (?, ?, ?)
+        """, (guild_id, channel_id, server_name))
+        await conn.commit()
+        await conn.close()
+
+async def remove_logchannel(guild_id, server_name):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("DELETE FROM server_logs WHERE guild_id = ? AND server_name = ?", (guild_id, server_name))
+        await conn.commit()
+        await conn.close()
+
+async def fetch_logchannel(guild_id, server_name):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("SELECT channel_id FROM server_logs WHERE guild_id = ? AND server_name = ?", (guild_id, server_name))
+        result = await cursor.fetchone()
+        await conn.close()
+        return result[0] if result else None
 
 if __name__ == "__main__":
     import asyncio

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import settings
+import utils.settings as settings
 import os
 import logging
 from utils.database import initialize_db

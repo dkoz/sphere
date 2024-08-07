@@ -2,11 +2,12 @@
  > [!WARNING]  
  > Still in development, use at your own risk!
 
- This bot is intended to be a replacement for my current [Palbot](https://github.com/dkoz/palworld-palbot) project. 
+ This bot is designed to be a server management replacement for my current [Palbot](https://github.com/dkoz/palworld-palbot) project. Unlike Palbot, which only supports Steam servers, this new project is created to support both Xbox and Steam servers.
 
 ## Features:
  - **Server Management**: Ability to control your servers directly from the bot.
  - **Player Logging**: Log extensive information about players who are active on your servers.
+ - **Connection Events**: Logs and reports players connecting to the server.
  - **Ban List Logger**: When players are banned through the bot, it will be logged in the SQL database with the reason.
  - **Whitelist Management**: Allows you to enable a whitelist for your server so only select users can play.
  - **Administration Control**: Allows you to kick, ban, and manage players on your server directly from the bot.

@@ -3,6 +3,7 @@ from discord.ext import commands
 import utils.settings as settings
 import os
 import logging
+from utils.constants import SPHERE_START
 from utils.database import initialize_db
 
 log_path = os.path.join('logs', 'bot.log')
@@ -34,6 +35,8 @@ bot.setup_hook = setup_hook
 
 @bot.event
 async def on_ready():
+    print(SPHERE_START)
+    print(f"Your bot is in {len(bot.guilds)} servers and serving {len(bot.users)} users.")
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     await bot.change_presence(activity=discord.Game(name="Palworld"))
 

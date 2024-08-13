@@ -30,7 +30,7 @@ class PlayerLoggingCog(commands.Cog):
                     await add_player(player)
                 logging.info(f"Players from server '{server_name}' logged successfully.")
             except Exception as e:
-                logging.error(f"An unexpected error occurred while logging players from server '{server_name}': {str(e)}")
+                logging.error(f"Issues logging players on '{server_name}': {str(e)}")
 
     async def player_autocomplete(self, interaction: discord.Interaction, current: str):
         players = await player_autocomplete(current)

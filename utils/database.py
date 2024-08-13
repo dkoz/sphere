@@ -52,6 +52,14 @@ async def initialize_db():
             channel_id INTEGER NOT NULL,
             server_name TEXT NOT NULL,
             PRIMARY KEY (guild_id, server_name)
+        )""",
+        """CREATE TABLE IF NOT EXISTS query_logs (
+            guild_id INTEGER NOT NULL,
+            channel_id INTEGER NOT NULL,
+            server_name TEXT NOT NULL,
+            message_id INTEGER NOT NULL,
+            player_message_id INTEGER NOT NULL,
+            PRIMARY KEY (guild_id, server_name)
         )"""
     ]
     conn = await db_connection()
@@ -181,6 +189,39 @@ async def fetch_logchannel(guild_id, server_name):
         result = await cursor.fetchone()
         await conn.close()
         return result[0] if result else None
+    
+# Query Server
+async def add_query(guild_id, channel_id, server_name, message_id, player_message_id):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("""
+            INSERT OR REPLACE INTO query_logs (guild_id, channel_id, server_name, message_id, player_message_id)
+            VALUES (?, ?, ?, ?, ?)
+        """, (guild_id, channel_id, server_name, message_id, player_message_id))
+        await conn.commit()
+        await conn.close()
+
+async def fetch_query(guild_id, server_name):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("""
+            SELECT channel_id, message_id, player_message_id
+            FROM query_logs
+            WHERE guild_id = ? AND server_name = ?
+        """, (guild_id, server_name))
+        result = await cursor.fetchone()
+        await conn.close()
+        return result if result else None
+
+async def delete_query(guild_id, server_name):
+    conn = await db_connection()
+    if conn is not None:
+        cursor = await conn.cursor()
+        await cursor.execute("DELETE FROM query_logs WHERE guild_id = ? AND server_name = ?", (guild_id, server_name))
+        await conn.commit()
+        await conn.close()
 
 if __name__ == "__main__":
     import asyncio

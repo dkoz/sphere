@@ -14,6 +14,7 @@ class ServerManagementCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # The devs need a "health" api endpoint to check if RESTAPI is up...
     @app_commands.command(name="addserver", description="Add a server configuration")
     @app_commands.default_permissions(administrator=True)
     async def add_server_command(self, interaction: discord.Interaction):

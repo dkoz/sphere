@@ -23,6 +23,7 @@ class WhitelistCog(commands.Cog):
     def cog_unload(self):
         self.check_whitelist.cancel()
 
+    # So much easier than RCON. lol
     @tasks.loop(seconds=60)
     async def check_whitelist(self):
         servers = await fetch_all_servers()

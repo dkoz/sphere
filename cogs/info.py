@@ -47,8 +47,8 @@ class ServerInfoCog(commands.Cog):
             
             await interaction.followup.send(embed=embed)
         except Exception as e:
-            await interaction.followup.send(f"An unexpected error occurred: {str(e)}", ephemeral=True)
-            logging.error(f"An unexpected error occurred: {str(e)}")
+            await interaction.followup.send(f"Error getting server info: {str(e)}", ephemeral=True)
+            logging.error(f"Error getting server info: {str(e)}")
 
 async def setup(bot):
     await bot.add_cog(ServerInfoCog(bot))

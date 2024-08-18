@@ -11,8 +11,6 @@ log_path = os.path.join('logs', 'bot.log')
 logging.basicConfig(level=logging.INFO, filename=log_path, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
 intents = discord.Intents.all()
-intents.message_content = True
-
 bot = commands.Bot(command_prefix=settings.bot_prefix, intents=intents)
 
 @bot.command()
@@ -37,6 +35,7 @@ bot.setup_hook = setup_hook
 async def on_ready():
     print(SPHERE_START)
     print(f"Your bot is in {len(bot.guilds)} servers and serving {len(bot.users)} users.")
+    print(f"Invite link: {discord.utils.oauth_url(bot.user.id, permissions=discord.Permissions(permissions=8))}")
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     await bot.change_presence(activity=discord.Game(name="Palworld"))
 

@@ -43,11 +43,11 @@ class PlayerLogCog(commands.Cog):
                         left_players = old_players - current_players
 
                         for userId, accountName in joined_players:
-                            join_text = f"Player {accountName} ({userId}) has joined the server."
+                            join_text = f"Player {accountName} ({userId}) has joined {server_name}."
                             join = discord.Embed(title="Player Joined", description=join_text , color=discord.Color.green())
                             await channel.send(embed=join)
                         for userId, accountName in left_players:
-                            left_text = f"Player {accountName} ({userId}) has left the server."
+                            left_text = f"Player {accountName} ({userId}) has left {server_name}."
                             left = discord.Embed(title="Player Left", description=left_text, color=discord.Color.red())
                             await channel.send(embed=left)
 

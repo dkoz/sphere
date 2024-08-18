@@ -49,7 +49,7 @@ class ServerQueryCog(commands.Cog):
                         player_message = await channel.fetch_message(player_message_id)
                         await player_message.edit(embed=player_embed)
 
-                        # Message cleanup
+                        # Need a better clean up method
                         await message.edit(content="")
                         await player_message.edit(content="")
 
@@ -71,7 +71,7 @@ class ServerQueryCog(commands.Cog):
         return embed
 
     def create_player_embed(self, player_list):
-        player_names = "\n".join([f"{player['accountName']} ({player['userId']})" for player in player_list['players']])
+        player_names = "\n".join([f"{player['name']}({player['accountName']}) - {player['userId']}" for player in player_list['players']])
         embed = discord.Embed(
             title="Players",
             color=discord.Color.green()
@@ -84,9 +84,9 @@ class ServerQueryCog(commands.Cog):
         server_names = await server_autocomplete(guild_id, current)
         return [app_commands.Choice(name=name, value=name) for name in server_names]
     
-    query = app_commands.command(name="query", description="Query the server for information", default_permissions=discord.Permissions(administrator=True))
+    query_group = app_commands.Group(name="query", description="Query the server for information", default_permissions=discord.Permissions(administrator=True))
 
-    @query.command(name="add", description="Set the channel to query and log server info")
+    @query_group.command(name="add", description="Set the channel to query and log server info")
     @app_commands.describe(server="The name of the server", channel="The channel to log events in")
     @app_commands.autocomplete(server=server_names)
     async def add_query(self, interaction: discord.Interaction, server: str, channel: discord.TextChannel):
@@ -101,7 +101,7 @@ class ServerQueryCog(commands.Cog):
             await interaction.followup.send(f"Error in 'Add Query' command: {str(e)}", ephemeral=True)
             logging.error(f"Error in 'Add Query' command: {str(e)}")
 
-    @query.command(name="remove", description="Remove the query channel for server info")
+    @query_group.command(name="remove", description="Remove the query channel for server info")
     @app_commands.describe(server="The name of the server")
     @app_commands.autocomplete(server=server_names)
     async def remove_query(self, interaction: discord.Interaction, server: str):

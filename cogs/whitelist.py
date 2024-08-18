@@ -10,7 +10,8 @@ from utils.whitelist import (
 )
 from utils.database import (
     fetch_all_servers,
-    server_autocomplete
+    server_autocomplete,
+    fetch_logchannel
 )
 from palworld_api import PalworldAPI
 import logging
@@ -31,6 +32,10 @@ class WhitelistCog(commands.Cog):
             guild_id, server_name, host, password, api_port = server
             if not await whitelist_get(guild_id, server_name):
                 continue
+            
+            log_channel_id = await fetch_logchannel(guild_id, server_name)
+            log_channel = self.bot.get_channel(log_channel_id) if log_channel_id else None
+
             try:
                 api = PalworldAPI(f"http://{host}:{api_port}", "admin", password)
                 player_list = await api.get_player_list()
@@ -39,6 +44,12 @@ class WhitelistCog(commands.Cog):
                     if not await is_whitelisted(playerid):
                         await api.kick_player(playerid, "You are not whitelisted.")
                         logging.info(f"Player {playerid} kicked from server '{server_name}' for not being whitelisted.")
+                        
+                        if log_channel:
+                            kick_message = f"Player `{playerid}` was kicked from server {server_name} for not being whitelisted."
+                            embed = discord.Embed(title="Whitelist Check", description=kick_message, color=discord.Color.red())
+                            await log_channel.send(embed=embed)
+
                 logging.info(f"Whitelist checked for server '{server_name}'.")
             except Exception as e:
                 logging.error(f"An unexpected error occurred while checking whitelist for server '{server_name}': {str(e)}")

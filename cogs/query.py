@@ -20,7 +20,7 @@ class ServerQueryCog(commands.Cog):
     def cog_unload(self):
         self.update_messages.cancel()
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=60)
     async def update_messages(self):
         servers = await fetch_all_servers()
         for server in servers:

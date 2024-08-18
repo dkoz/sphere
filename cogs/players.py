@@ -5,7 +5,7 @@ from utils.database import fetch_server_details, server_autocomplete
 from palworld_api import PalworldAPI
 import logging
 
-class PlayerListCog(commands.Cog):
+class PlayersCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -27,7 +27,7 @@ class PlayerListCog(commands.Cog):
         choices = [app_commands.Choice(name=name, value=name) for name in server_names]
         return choices
 
-    @app_commands.command(name="playerlist", description="Get the full player list of a selected server.")
+    @app_commands.command(name="players", description="Get the full player list of a selected server.")
     @app_commands.describe(server="The name of the server to retrieve the player list from")
     @app_commands.autocomplete(server=server_autocomplete)
     @app_commands.default_permissions(administrator=True)
@@ -63,4 +63,4 @@ class PlayerListCog(commands.Cog):
         return embed
 
 async def setup(bot):
-    await bot.add_cog(PlayerListCog(bot))
+    await bot.add_cog(PlayersCog(bot))

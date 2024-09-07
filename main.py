@@ -4,7 +4,6 @@ import utils.settings as settings
 import os
 import logging
 from utils.constants import SPHERE_START
-from utils.database import initialize_db
 
 log_path = os.path.join('logs', 'bot.log')
 
@@ -17,19 +16,7 @@ bot = commands.Bot(command_prefix=settings.bot_prefix, intents=intents)
 async def ping(ctx):
     await ctx.send(f'Pong! {round(bot.latency * 1000)}ms')
 
-async def setup_hook():
-    await initialize_db()
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py") and not filename.startswith("__"):
-            extension = filename[:-3]
-            try:
-                await bot.load_extension(f"cogs.{extension}")
-                logging.info(f"Loaded {extension}.")
-            except Exception as e:
-                logging.error(f"Failed to load {extension}: {e}")
-    await bot.tree.sync()
-
-bot.setup_hook = setup_hook
+bot.setup_hook = lambda: settings.setup_hook(bot)
 
 @bot.event
 async def on_ready():

@@ -20,7 +20,7 @@ class EventsCog(commands.Cog):
     def cog_unload(self):
         self.log_players.cancel()
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=20)
     async def log_players(self):
         servers = await fetch_all_servers()
         for server in servers:

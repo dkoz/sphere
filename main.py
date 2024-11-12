@@ -1,13 +1,10 @@
 import discord
 from discord.ext import commands
 import utils.settings as settings
-import os
-import logging
+from utils.errorhandling import setup_logging
 from utils.constants import SPHERE_START
 
-log_path = os.path.join('logs', 'bot.log')
-
-logging.basicConfig(level=logging.INFO, filename=log_path, format='%(asctime)s:%(levelname)s:%(name)s: %(message)s')
+setup_logging()
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=settings.bot_prefix, intents=intents)

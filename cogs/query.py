@@ -11,6 +11,7 @@ from utils.database import (
 )
 from palworld_api import PalworldAPI
 import logging
+import asyncio
 
 class ServerQueryCog(commands.Cog):
     def __init__(self, bot):
@@ -45,13 +46,11 @@ class ServerQueryCog(commands.Cog):
 
                         message = await channel.fetch_message(message_id)
                         await message.edit(embed=server_embed)
+                        await asyncio.sleep(5)
 
                         player_message = await channel.fetch_message(player_message_id)
                         await player_message.edit(embed=player_embed)
-
-                        # Need a better clean up method
-                        await message.edit(content="")
-                        await player_message.edit(content="")
+                        await asyncio.sleep(5)
 
                     except Exception as e:
                         logging.error(f"Error updating query server: '{server_name}': {str(e)}")

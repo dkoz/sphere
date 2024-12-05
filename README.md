@@ -12,6 +12,7 @@
  - **Whitelist Management**: Allows you to enable a whitelist for your server so only select users can play.
  - **Administration Control**: Allows you to kick, ban, and manage players on your server directly from the bot.
  - **Server Query**: Allows you query servers added to the bot.
+ - **Global Banlist**: This will allow you to global ban across all your servers using the [Sphere Banlist API](https://github.com/projectsphere/banlist-api).
 
 ## Installation
  1. Create a `.env` file and fill out your `BOT_TOKEN` and `BOT_PREFIX`

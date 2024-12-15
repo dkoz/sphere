@@ -44,12 +44,22 @@ class ServerQueryCog(commands.Cog):
                         server_embed = self.create_server_embed(server_name, server_info, server_metrics)
                         player_embed = self.create_player_embed(player_list)
 
-                        message = await channel.fetch_message(message_id)
-                        await message.edit(embed=server_embed)
+                        try:
+                            message = await channel.fetch_message(message_id)
+                            await message.edit(embed=server_embed)
+                        except discord.NotFound:
+                            message = await channel.send(embed=server_embed)
+                            await add_query(guild_id, channel_id, server_name, message.id, player_message_id)
+                        
                         await asyncio.sleep(5)
 
-                        player_message = await channel.fetch_message(player_message_id)
-                        await player_message.edit(embed=player_embed)
+                        try:
+                            player_message = await channel.fetch_message(player_message_id)
+                            await player_message.edit(embed=player_embed)
+                        except discord.NotFound:
+                            player_message = await channel.send(embed=player_embed)
+                            await add_query(guild_id, channel_id, server_name, message.id, player_message.id)
+
                         await asyncio.sleep(5)
 
                     except Exception as e:

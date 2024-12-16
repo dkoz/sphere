@@ -52,10 +52,12 @@ class GlobalBan(commands.Cog):
             await interaction.followup.send(f"An error occurred while unbanning the user: {str(e)}", ephemeral=True)
 
     @api_group.command(name="banlist", description="Get detailed banned users list.")
-    async def banned_users(self, interaction: discord.Interaction):
+    @app_commands.describe(name="Filter the banlist by name")
+    async def banned_users(self, interaction: discord.Interaction, name: str = None):
         await interaction.response.defer(ephemeral=True)
         try:
-            bans = await self.api_request("GET", "/api/bannedusers")
+            params = {"name": name} if name else None
+            bans = await self.api_request("GET", "/api/bannedusers", params=params)
             if not bans:
                 await interaction.followup.send("No users are currently banned.", ephemeral=True)
                 return
